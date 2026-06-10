@@ -2,9 +2,9 @@
    Fonts
    ------------------------------------------------------------
    Single typeface: Clash Grotesk (loaded from the Fontshare CDN
-   in layout.jsx). Weights used: 300 Light (body), 400 Regular
-   (form/footer), 500 Medium (wordmark, button), 600 Semibold
-   (intro emphasis). No @font-face needed — it's linked in head.
+   in layout.jsx). Weights used: 400 Regular (body, form, footer),
+   500 Medium (wordmark, intro emphasis, button). No @font-face
+   needed — it's linked in head.
    ============================================================ */
 
 :root {
@@ -77,14 +77,14 @@ body {
 .copy p {
   margin: 0 0 22px;
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 18px;
   line-height: 1.6;
   max-width: 60ch;
 }
 
 .copy .intro {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .copy a {
