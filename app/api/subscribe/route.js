@@ -19,20 +19,29 @@ function isValidEmail(email) {
 }
 
 async function saveToButtondown(email) {
-  const key = process.env.BUTTONDOWN_API_KEY;
-  if (!key) throw new Error("Missing BUTTONDOWN_API_KEY");
+  // Keyless: uses Buttondown's embed endpoint, which works on the FREE tier
+  // and exposes no secret. Set BUTTONDOWN_USERNAME to your public newsletter
+  // username (NOT an API key). Called server-side here to avoid CORS and to
+  // keep the custom success message.
+  const username = process.env.BUTTONDOWN_USERNAME;
+  if (!username) throw new Error("Missing BUTTONDOWN_USERNAME");
 
-  const res = await fetch("https://api.buttondown.com/v1/subscribers", {
-    method: "POST",
-    headers: {
-      Authorization: `Token ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email_address: email }),
-  });
+  const form = new URLSearchParams();
+  form.set("email", email);
+  form.set("embed", "1");
 
-  // 201 = created, 200 = already exists on some plans
-  if (!res.ok && res.status !== 409) {
+  const res = await fetch(
+    `https://buttondown.com/api/emails/embed-subscribe/${encodeURIComponent(
+      username
+    )}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: form.toString(),
+    }
+  );
+
+  if (!res.ok) {
     const body = await res.text();
     throw new Error(`Buttondown error ${res.status}: ${body}`);
   }

@@ -47,16 +47,22 @@ Pick one by setting `EMAIL_PROVIDER` in your environment.
 
 ### Option A — Buttondown (recommended for you)
 
-Best fit: you own the data, dead-simple API, clean dashboard, free up to 100
-subscribers. Good for a technical founder who wants a real list, not a black box.
+Best fit: you own the data, works on the free tier (up to 100 subscribers), and
+needs no API key — so there's no secret to expose. It uses Buttondown's embed
+endpoint with your public username, called from the server route.
 
-1. Sign up at buttondown.com, grab your API key from Settings → API.
+1. Sign up at buttondown.com and note your newsletter **username** (the public
+   handle in your newsletter URL, e.g. `manifold` in `buttondown.com/manifold`).
 2. Set env vars:
    ```
    EMAIL_PROVIDER=buttondown
-   BUTTONDOWN_API_KEY=your_key
+   BUTTONDOWN_USERNAME=your_username
    ```
 3. Subscribers appear in your Buttondown dashboard. Export to CSV anytime.
+
+Note: Buttondown's REST API key is only needed for advanced/programmatic use
+(tags, metadata) and is a paid-plan feature. The keyless embed path above is
+all you need to start collecting emails.
 
 ### Option B — Mailchimp
 
