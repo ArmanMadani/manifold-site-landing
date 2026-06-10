@@ -23,16 +23,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Fallback web font (Newsreader) while you license + host PP Editorial New.
-            Once your woff2 files are in /public/fonts the real font takes over. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        {/* Single typeface: Clash Grotesk via Fontshare (weights 300/400/500/600). */}
+        <link rel="preconnect" href="https://api.fontshare.com" />
         <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+          href="https://api.fontshare.com/v2/css?f[]=clash-grotesk@300,400,500,600&display=swap"
           rel="stylesheet"
         />
       </head>

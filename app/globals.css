@@ -1,49 +1,11 @@
 /* ============================================================
-   PP Editorial New
+   Fonts
    ------------------------------------------------------------
-   PP Editorial New is a licensed font from Pangram Pangram.
-   It is NOT included here. To use the real font on the web:
-
-   1. In Font Book on your Mac, the font is installed but the
-      original files live in ~/Library/Fonts or /Library/Fonts
-      (look for "PPEditorialNew-*.otf").
-   2. You may NOT redistribute .otf files for web use without a
-      web license. Buy a web license from pangrampangram.com,
-      which gives you .woff2 files cleared for web embedding.
-   3. Convert/obtain .woff2 files and drop them into
-      /public/fonts with the names referenced below.
-
-   Until those files exist, the site gracefully falls back to
-   "Newsreader" (loaded from Google Fonts in layout.jsx), which
-   is a close high-contrast serif, then to Georgia.
+   Single typeface: Clash Grotesk (loaded from the Fontshare CDN
+   in layout.jsx). Weights used: 300 Light (body), 400 Regular
+   (form/footer), 500 Medium (wordmark, button), 600 Semibold
+   (intro emphasis). No @font-face needed — it's linked in head.
    ============================================================ */
-
-   @font-face {
-    font-family: "PP Editorial New";
-    src: url("/fonts/PPEditorialNew-Regular.woff2") format("woff2"),
-      url("/fonts/PPEditorialNew-Regular.woff") format("woff");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-   
-  @font-face {
-    font-family: "PP Editorial New";
-    src: url("/fonts/PPEditorialNew-Italic.woff2") format("woff2"),
-      url("/fonts/PPEditorialNew-Italic.woff") format("woff");
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-  }
-   
-  @font-face {
-    font-family: "PP Editorial New";
-    src: url("/fonts/PPEditorialNew-Ultrabold.woff2") format("woff2"),
-      url("/fonts/PPEditorialNew-Ultrabold.woff") format("woff");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
 
 :root {
   --bg: #ffffff;
@@ -51,10 +13,8 @@
   --ink-soft: #4a4a44;
   --rule: #d6d6cc;
   --accent: #8fb4e0;
-  --font-serif: "PP Editorial New", "Newsreader", Georgia, "Times New Roman",
-    serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
-    monospace;
+  --font-display: "Clash Grotesk", ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", sans-serif;
   --maxw: 1100px;
 }
 
@@ -71,7 +31,7 @@ body {
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -107,7 +67,7 @@ body {
 }
 
 .wordmark {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 40px;
   line-height: 1.05;
   letter-spacing: -0.01em;
@@ -116,14 +76,15 @@ body {
 
 .copy p {
   margin: 0 0 22px;
-  font-family: var(--font-mono);
-  font-size: 16px;
-  line-height: 1.7;
-  max-width: 64ch;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 60ch;
 }
 
 .copy .intro {
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .copy a {
@@ -145,8 +106,9 @@ body {
 
 .signup input[type="email"] {
   flex: 1;
-  font-family: var(--font-mono);
-  font-size: 15px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 16px;
   padding: 12px 14px;
   border: 1px solid var(--ink);
   border-radius: 4px;
@@ -164,9 +126,9 @@ body {
 }
 
 .signup button {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
   padding: 13px 22px;
   border: none;
   border-radius: 4px;
@@ -188,8 +150,9 @@ body {
 
 .signup__msg {
   margin-top: 12px;
-  font-family: var(--font-mono);
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 14px;
   min-height: 20px;
 }
 
@@ -212,8 +175,9 @@ body {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 22px 0;
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 13px;
   color: var(--ink-soft);
   gap: 16px;
 }
@@ -260,7 +224,7 @@ body {
   }
 
   .copy p {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .signup__row {
