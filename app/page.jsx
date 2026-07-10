@@ -89,17 +89,17 @@ export default function Home() {
                     <div className="copy">
                       <p>
                         manifold labs is an ai research lab dedicated to exploring
-                        human-ai interaction. our goals are:
+                        human-ai interaction. our goals are to:
                       </p>
                       <ol>
                         <li>
-                          to make agent use broadly accessible and economically viable
+                          make agent use broadly accessible and economically viable
                         </li>
                         <li>
-                          to make agents safe and effective in highly-regulated domains
+                          make agents safe and effective in highly-regulated domains
                         </li>
                         <li>
-                          to reduce barriers to open-source and local model usage
+                          reduce barriers to open-source and local model usage
                         </li>
                       </ol>
                     </div>
