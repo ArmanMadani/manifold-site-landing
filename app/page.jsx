@@ -48,65 +48,60 @@ export default function Home() {
       <main className="main">
         <div className="container">
           <div className="content">
-            <div>
-              <h1 className="wordmark">Manifold Labs</h1>
-            </div>
+            <h1 className="wordmark">manifold labs</h1>
 
+            <p className="section-label">about</p>
             <div className="copy">
-              <p>Personal finances can be complicated. But they don&rsquo;t have to be.</p>
-
               <p>
-                We understand that everyone has a unique relationship with their
-                money. That&rsquo;s why inflexible financial interfaces and
-                misaligned AI models can feel frustrating.
+                manifold labs is an ai research lab dedicated to exploring
+                human-ai interaction. our goals are:
               </p>
-
-              <p className="intro">
-                Introducing Manifold Labs. We&rsquo;re improving the financial
-                reasoning capabilities of AI models. We envision a future in which
-                agentic consumer finance is safe, secure, and effective for
-                everyone.
-              </p>
-
-              <p>
-                There&rsquo;s much to build &mdash; from a deeper, native
-                understanding of transaction streams, to comprehensive evaluation
-                suites, to safety protocols that keep you in control. We hope
-                you&rsquo;ll be able to use our apps to interact with your money in
-                novel ways.
-              </p>
-
-              <p>We&rsquo;re launching soon! Subscribe for updates.</p>
-
-              <form className="signup" onSubmit={handleSubmit} noValidate>
-                <div className="signup__row">
-                  <input
-                    type="email"
-                    name="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder="you@example.com"
-                    aria-label="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  <button type="submit" disabled={status === "loading"}>
-                    {status === "loading" ? "Subscribing\u2026" : "Subscribe"}
-                  </button>
-                </div>
-                <div
-                  className={
-                    "signup__msg " +
-                    (status === "ok" ? "ok" : status === "err" ? "err" : "")
-                  }
-                  role="status"
-                  aria-live="polite"
-                >
-                  {message}
-                </div>
-              </form>
+              <ol>
+                <li>
+                  to make agent use broadly accessible and
+                  economically viable
+                </li>
+                <li>
+                  to make agents safe and effective in
+                  highly-regulated domains
+                </li>
+                <li>
+                  to reduce barriers to open-source and local model usage
+                </li>
+              </ol>
             </div>
+
+            <p className="section-label">projects</p>
+            <p className="coming-soon">&gt;&gt;&gt;  coming soon</p>
+
+            <form className="signup" onSubmit={handleSubmit} noValidate>
+              <div className="signup__row">
+                <input
+                  type="email"
+                  name="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  aria-label="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <button type="submit" disabled={status === "loading"}>
+                  {status === "loading" ? "Subscribing…" : "Subscribe"}
+                </button>
+              </div>
+              <div
+                className={
+                  "signup__msg " +
+                  (status === "ok" ? "ok" : status === "err" ? "err" : "")
+                }
+                role="status"
+                aria-live="polite"
+              >
+                {message}
+              </div>
+            </form>
           </div>
         </div>
       </main>

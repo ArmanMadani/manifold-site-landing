@@ -1,10 +1,9 @@
 /* ============================================================
    Fonts
    ------------------------------------------------------------
-   Single typeface: Clash Grotesk (loaded from the Fontshare CDN
-   in layout.jsx). Weights used: 400 Regular (body, form, footer),
-   500 Medium (wordmark, intro emphasis, button). No @font-face
-   needed — it's linked in head.
+   Gambarino (serif, display) — wordmark only
+   Switzer (sans-serif) — all other text
+   Both loaded from Fontshare CDN in layout.jsx
    ============================================================ */
 
 :root {
@@ -12,14 +11,17 @@
   --ink: #1e1e1e;
   --ink-soft: #4a4a44;
   --rule: #d6d6cc;
-  --accent: #8fb4e0;
-  --font-display: "Clash Grotesk", ui-sans-serif, system-ui,
-    -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Gambarino", "Playfair Display", serif;
+  --font-sans: "Switzer", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --maxw: 1100px;
 }
 
 * {
   box-sizing: border-box;
+}
+
+input, button, textarea, select {
+  font-family: inherit;
 }
 
 html,
@@ -31,7 +33,7 @@ body {
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -57,61 +59,79 @@ body {
   padding-bottom: 64px;
 }
 
-/* ---- Content row ---- */
+/* ---- Content ---- */
 .content {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 56px;
-  margin-top: 0;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 640px;
 }
 
 .wordmark {
-  font-weight: 500;
-  font-size: 40px;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 48px;
+  line-height: 1.0;
+  letter-spacing: 0.025em;
+  margin: 0 0 40px;
 }
 
-.copy p {
-  margin: 0 0 22px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 1.6;
-  max-width: 60ch;
-}
-
-.copy .intro {
-  font-weight: 500;
-}
-
-.copy a {
-  color: inherit;
+/* Medium-weight underlined section labels */
+.section-label {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
+  margin: 0 0 16px;
+}
+
+.copy p,
+.copy ol {
+  margin: 0 0 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.copy ol {
+  padding-left: 22px;
+  margin-top: 14px;
+}
+
+.copy ol li {
+  margin-bottom: 6px;
+}
+
+.coming-soon {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--ink-soft);
+  margin: 0 0 0;
 }
 
 /* ---- Email form ---- */
 .signup {
-  margin-top: 32px;
-  max-width: 460px;
+  margin-top: 40px;
+  max-width: 360px;
+  width: 100%;
 }
 
 .signup__row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .signup input[type="email"] {
   flex: 1;
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-weight: 400;
-  font-size: 16px;
-  padding: 12px 14px;
-  border: 1px solid var(--ink);
-  border-radius: 4px;
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
   background: transparent;
   color: var(--ink);
   outline: none;
@@ -122,38 +142,39 @@ body {
 }
 
 .signup input[type="email"]:focus {
-  box-shadow: 0 0 0 3px rgba(143, 180, 224, 0.55);
+  border-color: var(--ink-soft);
 }
 
 .signup button {
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 500;
-  padding: 13px 22px;
-  border: none;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #9cc4f0 0%, #5b8fd9 100%);
-  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink-soft);
   cursor: pointer;
   white-space: nowrap;
-  transition: filter 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
 .signup button:hover {
-  filter: brightness(1.06);
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
 .signup button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .signup__msg {
-  margin-top: 12px;
-  font-family: var(--font-display);
+  margin-top: 8px;
+  font-family: var(--font-sans);
   font-weight: 400;
-  font-size: 14px;
-  min-height: 20px;
+  font-size: 12px;
+  min-height: 18px;
 }
 
 .signup__msg.ok {
@@ -174,10 +195,10 @@ body {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 22px 0;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 13px;
+  padding: 14px 0;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 12px;
   color: var(--ink-soft);
   gap: 16px;
 }
@@ -209,21 +230,17 @@ body {
    ============================================================ */
 @media (max-width: 760px) {
   .main {
-    padding-top: 40px;
-    padding-bottom: 40px;
-  }
-
-  .content {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    margin-top: 0;
+    padding-top: 48px;
+    padding-bottom: 48px;
   }
 
   .wordmark {
-    font-size: 34px;
+    font-size: 38px;
+    margin-bottom: 32px;
   }
 
-  .copy p {
+  .copy p,
+  .copy ol {
     font-size: 17px;
   }
 
