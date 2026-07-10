@@ -64,6 +64,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.copy {
   max-width: 640px;
 }
 
@@ -84,6 +87,61 @@ body {
   text-decoration: underline;
   text-underline-offset: 4px;
   margin: 0 0 16px;
+}
+
+/* ---- Collapse group (Geist-style) ---- */
+.collapse-group {
+  width: min(100%, 760px);
+  margin-top: 32px;
+  border-top: 1px solid var(--rule);
+}
+
+.collapse-item {
+  border-bottom: 1px solid var(--rule);
+}
+
+.collapse-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 16px;
+  color: var(--ink);
+  text-align: left;
+}
+
+.collapse-chevron {
+  flex-shrink: 0;
+  color: var(--ink-soft);
+  transition: transform 0.2s ease;
+}
+
+.collapse-chevron.open {
+  transform: rotate(180deg);
+}
+
+.collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+}
+
+.collapsible.open {
+  grid-template-rows: 1fr;
+}
+
+.collapsible__inner {
+  overflow: hidden;
+}
+
+.collapsible.open .collapsible__inner {
+  padding-bottom: 16px;
 }
 
 .copy p,
@@ -114,7 +172,7 @@ body {
 
 /* ---- Email form ---- */
 .signup {
-  margin-top: 40px;
+  margin-top: 0;
   max-width: 360px;
   width: 100%;
 }
