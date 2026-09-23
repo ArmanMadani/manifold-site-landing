@@ -88,18 +88,19 @@ export default function Home() {
                   <div className="collapsible__inner">
                     <div className="copy">
                       <p>
-                        manifold labs is an ai research lab dedicated to exploring
-                        human-ai interaction. our goals are to:
+                        manifold labs creates apps that enable enterprises to work with 
+                        local, state, and federal organizations seamlessly. 
+                        our goals are to:
                       </p>
                       <ol>
                         <li>
-                          make agent use broadly accessible and economically viable
+                          develop highly specialized, domain expert agents
                         </li>
                         <li>
                           make agents safe and effective in highly-regulated domains
                         </li>
                         <li>
-                          reduce barriers to open-source and local model usage
+                          reduce barriers to rapid private-public partnership deployments
                         </li>
                       </ol>
                     </div>
