@@ -25,3 +25,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# local session notes and test scripts (not deployed)
+/.session/
