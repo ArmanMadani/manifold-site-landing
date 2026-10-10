@@ -237,9 +237,12 @@ button {
   inset: 0;
   z-index: 1;
   place-items: center;
-  background: rgba(16, 16, 16, 0.55);
-  -webkit-backdrop-filter: blur(18px) saturate(110%);
-  backdrop-filter: blur(18px) saturate(110%);
+  /* As sheer as legibility allows: a heavy blur does most of the work,
+     evening out the bright dune crest, so the tint can stay very light.
+     Measured: white links ≥ 3.9:1 on all tested phone sizes (AA large text). */
+  background: rgba(16, 16, 16, 0.12);
+  -webkit-backdrop-filter: blur(40px) saturate(110%);
+  backdrop-filter: blur(40px) saturate(110%);
   opacity: 0;
   visibility: hidden;
   transition: opacity 400ms ease, visibility 0s linear 400ms;
@@ -264,6 +267,7 @@ button {
   line-height: 1.1;
   color: var(--paper);
   text-decoration: none;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 300ms ease, transform 500ms var(--ease);
