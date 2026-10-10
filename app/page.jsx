@@ -74,7 +74,16 @@ export default function Home() {
 
       <PanelScroller
         panels={PANELS}
-        footer={<>Made with &lt;3 in San Francisco</>}
+        footer={
+          <>
+            Made with{" "}
+            {/* U+FE0E forces the monochrome text glyph, never the emoji */}
+            <span role="img" aria-label="love">
+              {"♥︎"}
+            </span>{" "}
+            in San Francisco
+          </>
+        }
       />
     </main>
   );
