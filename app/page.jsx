@@ -41,9 +41,12 @@ const PANELS = [
         </p>
         <p className="panel__body">
           AI is <em>the transformational technology of this generation.</em> We
-          build the systems that eliminate barriers to growth, minimize costs,
-          and increase operational efficiency. We judge ourselves on
-          value-added outcomes for our clients, not hours billed.
+          build agentic systems that eliminate barriers to growth, minimize
+          costs, and increase operational efficiency.
+        </p>
+        <p className="panel__body">
+          We judge ourselves on value-added outcomes for our clients, not hours
+          billed.
         </p>
         {/* Placeholder: will link to the blog post once it exists. */}
         <p className="panel__body">
