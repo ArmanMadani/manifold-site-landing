@@ -1,4 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="12" fill="#1a1a18"/>
-  <text x="32" y="44" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-weight="700" fill="#eeeee7" text-anchor="middle">M</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <g fill="#0c0d0b">
+    <polygon points="22.62,256 267.35,0 267.35,256 512.08,256 267.35,512 22.62,512"/>
+    <polygon points="512.08,256 756.81,0 756.81,256 1001.54,256 756.81,512 512.08,512"/>
+    <polygon points="22.62,768 267.35,512 267.35,768 512.08,768 267.35,1024 22.62,1024"/>
+    <polygon points="512.08,768 756.81,512 756.81,768 1001.54,768 756.81,1024 512.08,1024"/>
+  </g>
+  <rect fill="#243370" x="267.35" y="0" width="244.73" height="256"/>
+  <rect fill="#3b86a4" x="756.81" y="0" width="244.73" height="256"/>
+  <rect fill="#eb9e2c" x="267.35" y="512" width="244.73" height="256"/>
+  <rect fill="#d8312a" x="756.81" y="512" width="244.73" height="256"/>
 </svg>
