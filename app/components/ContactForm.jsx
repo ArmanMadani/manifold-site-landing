@@ -72,7 +72,7 @@ export default function ContactForm() {
         // Show Formspree's field errors inline where we can
         const fieldErrors = {};
         for (const { field, message } of json.errors ?? []) {
-          if (field) fieldErrors[field] = message;
+          if (form.elements[field]?.id === field) fieldErrors[field] = message;
         }
         if (Object.keys(fieldErrors).length) {
           setErrors(fieldErrors);
