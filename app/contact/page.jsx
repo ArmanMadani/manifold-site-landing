@@ -1,6 +1,7 @@
 import Image from "next/image";
 import splash from "../../dune-splash-image.jpg";
 import ContactForm from "../components/ContactForm";
+import FadeOnLeave from "../components/FadeOnLeave";
 
 export const metadata = {
   title: "Contact — Manifold",
@@ -23,12 +24,14 @@ export default function Contact() {
         />
       </div>
 
-      <div className="contact-scrim" aria-hidden="true" />
+      <FadeOnLeave>
+        <div className="contact-scrim" aria-hidden="true" />
 
-      <section className="contact">
-        <h1 className="panel__title contact-pan" style={{ "--i": 0 }}>We’re excited to hear from you</h1>
-        <ContactForm />
-      </section>
+        <section className="contact">
+          <h1 className="panel__title contact-pan" style={{ "--i": 0 }}>We’re excited to hear from you</h1>
+          <ContactForm />
+        </section>
+      </FadeOnLeave>
     </main>
   );
 }

@@ -73,8 +73,8 @@ export default function SiteHeader() {
         onClick={onHomeClick}
         aria-label="Manifold — home"
       >
-        <BrandMark className="wordmark__icon" />
         <span className="wordmark__text">Manifold</span>
+        <BrandMark className="wordmark__icon" />
       </Link>
 
       <nav className="site-nav" aria-label="Primary">
