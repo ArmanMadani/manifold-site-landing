@@ -5,11 +5,9 @@ import ShinyButton from "./ShinyButton";
 
 const EMAIL = "contact@manifoldlabs.app";
 
-// FormSubmit relays the form to EMAIL with no account or server. The first
-// submission sends an activation link to EMAIL; nothing is delivered until
-// it's clicked. To swap providers (Formspree, Resend…), change this URL and
-// the payload in onSubmit.
-const ENDPOINT = `https://formsubmit.co/ajax/${EMAIL}`;
+// Formspree form (managed at formspree.io), delivering to EMAIL. Posted as
+// JSON per their AJAX guide so our own validation and states stay in charge.
+const ENDPOINT = "https://formspree.io/f/xyekpnld";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -42,9 +40,6 @@ export default function ContactForm() {
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form));
 
-    // Honeypot: real people never see or fill this field
-    if (data._honey) return setStatus("sent");
-
     const found = validate(data);
     setAttempted(true);
     setErrors(found);
@@ -67,15 +62,26 @@ export default function ContactForm() {
           company: data.company.trim(),
           email: data.email.trim(),
           message: data.message.trim() || "—",
-          _replyto: data.email.trim(),
           _subject: `Website inquiry from ${data.name.trim()} (${data.company.trim()})`,
-          _template: "table",
-          _captcha: "false",
+          // Honeypot: hidden from people; Formspree drops anything that fills it
+          _gotcha: data._gotcha,
         }),
       });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || json.success === "false" || json.success === false) {
-        throw new Error(json.message || `HTTP ${res.status}`);
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        // Show Formspree's field errors inline where we can
+        const fieldErrors = {};
+        for (const { field, message } of json.errors ?? []) {
+          if (field) fieldErrors[field] = message;
+        }
+        if (Object.keys(fieldErrors).length) {
+          setErrors(fieldErrors);
+          setStatus("idle");
+          return;
+        }
+        throw new Error(
+          json.errors?.map((e) => e.message).join("; ") || `HTTP ${res.status}`
+        );
       }
       form.reset();
       setAttempted(false);
@@ -145,7 +151,7 @@ export default function ContactForm() {
           />
           <input
             type="text"
-            name="_honey"
+            name="_gotcha"
             className="contact-form__honey"
             tabIndex={-1}
             autoComplete="off"
