@@ -4,8 +4,8 @@ import SiteHeader from "./components/SiteHeader";
 
 const editorial = localFont({
   src: [
-    { path: "../public/fonts/PPEditorialNew-Regular.woff2", weight: "400", style: "normal" },
-    { path: "../public/fonts/PPEditorialNew-Italic.woff2", weight: "400", style: "italic" },
+    { path: "../public/fonts/PPEditorialNew-Regular.woff", weight: "400", style: "normal" },
+    { path: "../public/fonts/PPEditorialNew-Italic.woff", weight: "400", style: "italic" },
   ],
   variable: "--font-editorial",
   display: "swap",
