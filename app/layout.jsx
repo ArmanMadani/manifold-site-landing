@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import SiteHeader from "./components/SiteHeader";
+import LeaveGate from "./components/LeaveGate";
 
 const editorial = localFont({
   src: [
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={editorial.variable}>
       <body>
+        <LeaveGate />
         <SiteHeader />
         {children}
       </body>
