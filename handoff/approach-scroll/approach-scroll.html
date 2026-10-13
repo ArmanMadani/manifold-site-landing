@@ -1,0 +1,510 @@
+<title>Manifold Process Sequence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Libre+Caslon+Condensed:wght@400..700&display=swap">
+<style>
+/* Layout: sticky scrollytelling — copy rail left, a 600×600 logical stage right that scales to fit; one scene per step, scrubbed by scroll.
+   Single dark look to sit inside the Manifold Labs About page: transparent section, frosted-glass cards, white condensed serif. */
+:root{
+  --ground:#141414;
+  --paper:rgba(22,22,22,.58);
+  --ink:#F3F2EF;
+  --on-ink:#121212;
+  --muted:rgba(243,242,239,.62);
+  --rule:rgba(243,242,239,.22);
+  --cobalt:#E6DCC6;
+  --cobalt-tint:rgba(230,220,198,.24);
+  --ok:#B9DEC6;
+  --ok-tint:rgba(150,205,170,.18);
+  --neg:#F0A68F;
+  --shadow:0 12px 32px -14px rgba(0,0,0,.65);
+  --f-sans:"Libre Caslon Condensed","Roboto Serif",Georgia,serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--ground);color:var(--ink)}
+body{font-family:var(--f-sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+/* stand-in for the About page's blurred grey-to-black backdrop; drop this when embedding */
+.backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(55% 40% at 85% 0%,#8c8c8c 0%,rgba(140,140,140,0) 70%),
+  radial-gradient(50% 40% at 8% 12%,#6a6a6a 0%,rgba(106,106,106,0) 70%),
+  radial-gradient(40% 50% at 75% 65%,#333 0%,rgba(51,51,51,0) 70%),
+  linear-gradient(180deg,#5c5c5c 0%,#2a2a2a 38%,#161616 70%,#0f0f0f 100%);
+  filter:blur(8px);transform:scale(1.05)}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:clamp(16px,4vw,48px)}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* intro */
+.intro{padding-block:72px 24px;display:grid;gap:14px}
+.intro h2{font-size:clamp(34px,5.2vw,60px);line-height:1;letter-spacing:-.025em;font-weight:600;margin:0;max-width:15ch;text-wrap:balance}
+.intro p{margin:0;max-width:54ch;color:var(--muted);font-size:18px}
+
+/* scrolly */
+.scrolly{position:relative;height:420vh}
+.sticky{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;height:100svh;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,64px);align-items:center}
+
+.copy{display:grid;gap:36px;min-width:0}
+.steps{display:grid}
+.step{grid-area:1/1;opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease;visibility:hidden}
+.step.on{opacity:1;transform:none;visibility:visible}
+.count{font-family:var(--f-mono);font-size:13px;letter-spacing:.06em;color:var(--muted);display:flex;gap:6px;align-items:baseline}
+.count b{color:var(--cobalt);font-weight:500}
+.step h3{font-size:clamp(30px,3.4vw,44px);line-height:1.04;letter-spacing:-.01em;font-weight:700;margin:14px 0 16px;text-wrap:balance}
+.step p{margin:0;max-width:46ch;font-size:20px;line-height:1.4;color:var(--ink)}
+.step p + p{margin-top:12px;color:var(--muted);font-size:18px}
+
+.rail{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:380px}
+.rail button{all:unset;cursor:pointer;display:grid;gap:8px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;color:var(--muted);padding-block:6px;border-radius:4px}
+.rail button:focus-visible{outline:2px solid var(--cobalt);outline-offset:4px}
+.rail button.on{color:var(--ink)}
+.track{height:2px;background:var(--rule);position:relative;overflow:hidden}
+.fill{position:absolute;inset:0;background:var(--ink);transform-origin:left;transform:scaleX(0)}
+
+.figure{display:flex;flex-direction:column;gap:14px;min-width:0}
+.stage-box{position:relative;width:100%;height:min(80svh,660px);height:min(80vh,660px)}
+@supports (height:1svh){.stage-box{height:min(80svh,660px)}}
+.stage{position:absolute;left:50%;top:50%;width:600px;height:600px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center}
+.caption{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:center;min-height:1.5em;transition:opacity .3s}
+
+.scene{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+.scene.on{opacity:1;visibility:visible}
+.scene svg{position:absolute;inset:0;width:600px;height:600px;overflow:visible}
+
+/* cards */
+.card,.chip,.node.on,.approve{-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.card{position:absolute;background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);font-size:14.5px;line-height:1.35}
+.k{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.rows{display:grid;gap:3px;font-family:var(--f-mono);font-size:11.5px}
+.rows > div{display:flex;justify-content:space-between;gap:10px}
+.rows .lab{color:var(--muted)}
+.neg{color:var(--neg)}
+.idline{margin-top:9px;padding-top:8px;border-top:1px solid var(--rule);font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.quote{font-size:15.5px;line-height:1.45}
+.hl{background-image:linear-gradient(var(--cobalt-tint),var(--cobalt-tint));background-repeat:no-repeat;background-size:calc(var(--h,0) * 100%) 100%;border-radius:3px;padding:0 2px;margin:0 -1px;color:var(--ink);transition:color .2s}
+.hl.lit{color:var(--cobalt)}
+
+.src{will-change:transform,opacity}
+.chip{position:absolute;display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border:1px solid var(--rule);border-radius:16px;background:var(--paper);font-family:var(--f-mono);font-size:11.5px;color:var(--ink);opacity:0;width:138px;box-sizing:border-box}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--cobalt);flex:none}
+
+.entity{padding:18px 18px 14px;border-color:var(--ink)}
+.entity .top{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.pill{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:11px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.04em;white-space:nowrap}
+.pill.blue{background:var(--cobalt-tint);color:var(--cobalt)}
+.entity .name{font-size:27px;font-weight:700;letter-spacing:-.015em;margin:6px 0 10px}
+.fields{display:grid}
+.field{display:grid;grid-template-columns:118px 62px minmax(0,1fr);gap:10px;align-items:baseline;padding:8px 0;border-top:1px solid var(--rule)}
+.field .f{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.field .v{font-family:var(--f-mono);font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.field .p{font-size:13.5px;color:var(--muted);line-height:1.35}
+.foot{margin-top:4px;padding-top:9px;border-top:1px solid var(--rule);font-family:var(--f-mono);font-size:10.5px;color:var(--muted);letter-spacing:.03em}
+
+/* scene 2 */
+.node{position:absolute;width:122px;box-sizing:border-box;transform:translate(-50%,-50%);padding:8px 10px;border:1px dashed var(--rule);border-radius:8px;background:transparent;color:var(--muted);transition:background .3s,border-color .3s,color .3s,box-shadow .3s;opacity:0}
+.node .n{font-size:15px;font-weight:700;line-height:1.15}
+.node .t{font-family:var(--f-mono);font-size:10px;margin-top:3px;line-height:1.2}
+.node.on{border-style:solid;border-color:var(--ink);background:var(--paper);color:var(--ink);box-shadow:var(--shadow)}
+.node.on .t{color:var(--cobalt)}
+.envlabel{position:absolute;left:218px;top:174px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;color:var(--cobalt);opacity:0}
+.hub{position:absolute;left:268px;top:198px;width:64px;height:64px;border-radius:50%;background:var(--ink);color:var(--on-ink);display:grid;place-items:center;font-size:16px;font-weight:700;letter-spacing:.01em;opacity:0}
+.tools{position:absolute;left:220px;top:282px;width:160px;display:grid;gap:4px;font-family:var(--f-mono);font-size:11px}
+.tools div{display:flex;align-items:center;gap:7px;height:20px;opacity:0}
+.tools div::before{content:"";width:5px;height:5px;background:var(--cobalt);flex:none}
+.tools .replay{margin-top:8px;font-size:10px;color:var(--muted);height:auto;line-height:1.3}
+.tools .replay::before{display:none}
+
+/* scene 3 */
+.insight{left:30px;top:22px;width:540px;box-sizing:border-box;padding:16px 18px;border-color:var(--ink)}
+.insight h4{margin:2px 0 12px;font-size:21px;line-height:1.25;font-weight:700;letter-spacing:-.005em;max-width:none}
+.ev{display:flex;flex-wrap:wrap;gap:6px}
+.ev span{font-family:var(--f-mono);font-size:10.5px;padding:3px 8px;border:1px solid var(--rule);border-radius:4px;color:var(--muted);opacity:0}
+.rec{margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);display:flex;gap:10px;align-items:baseline;font-size:16px;opacity:0}
+.rec .mono{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cobalt)}
+.act{position:absolute;left:62px;width:508px;height:60px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px 0 16px;opacity:0}
+.act .tt{font-size:16.5px;font-weight:600;line-height:1.25}
+.act .dd{font-size:13.5px;color:var(--muted);line-height:1.3}
+.status{min-width:104px;justify-content:center;border:1px solid var(--rule);color:var(--muted);transition:background .3s,color .3s,border-color .3s}
+.status.ready{background:var(--cobalt-tint);color:var(--cobalt);border-color:transparent}
+.status.done{background:var(--ok-tint);color:var(--ok);border-color:transparent}
+.approve{position:absolute;left:62px;top:472px;width:508px;height:58px;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:0 16px;border:1.5px solid var(--ok);border-radius:10px;color:var(--ok);background:var(--paper);opacity:0}
+.approve .tick{width:26px;height:26px;border-radius:50%;background:var(--ok);color:var(--on-ink);display:grid;place-items:center;font-size:14px;flex:none}
+.approve .tt{font-size:16.5px;font-weight:600;color:var(--ink)}
+.approve .dd{font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+
+.outro{padding-block:56px 96px;font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+
+/* narrow: stack copy over figure inside the sticky frame */
+@media (max-width:860px){
+  .sticky{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);align-items:stretch;gap:12px;padding-block:20px 12px;box-sizing:border-box}
+  .copy{gap:14px}
+  .step h3{font-size:24px;margin:8px 0 8px}
+  .step p{font-size:15px}
+  .step p + p{display:none}
+  .figure{height:100%;min-height:0}
+  .stage-box{height:auto;flex:1;min-height:0}
+  .rail{max-width:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .step,.scene,.node,.status,.hl{transition:none}
+}
+</style>
+
+<div class="backdrop" aria-hidden="true"></div>
+<section class="scrolly" id="scrolly">
+  <div class="sticky wrap">
+    <div class="copy">
+      <div class="steps">
+        <article class="step on" data-step="0">
+          <div class="count"><b>01</b> / 03</div>
+          <h3>Unify and contextualize your data</h3>
+          <p>We pull the relevant datasets together and resolve the same customer, account, or model across every system it lives in.</p>
+          <p>Then we document what each field means, where it came from, and how fresh it is, so an agent can use it without guessing.</p>
+        </article>
+        <article class="step" data-step="1">
+          <div class="count"><b>02</b> / 03</div>
+          <h3>Connect the dots between siloed systems</h3>
+          <p>Your core, loan system, CRM, and vendor portals were never built to talk. We wire them together, including the ones without APIs.</p>
+          <p>Where a task needs it, we build a custom environment: the right tools, scoped access, and your own history to test against before anything reaches production.</p>
+        </article>
+        <article class="step" data-step="2">
+          <div class="count"><b>03</b> / 03</div>
+          <h3>Carry data from insights to action</h3>
+          <p>Insights are delivered to the relevant people. Agents can draft responses, write updates, and open follow-up work to the taste of your enterprise.</p>
+        </article>
+      </div>
+      <nav class="rail" aria-label="Steps">
+        <button type="button" class="on" data-go="0"><span>01 Unify</span><span class="track"><span class="fill"></span></span></button>
+        <button type="button" data-go="1"><span>02 Connect</span><span class="track"><span class="fill"></span></span></button>
+        <button type="button" data-go="2"><span>03 Act</span><span class="track"><span class="fill"></span></span></button>
+      </nav>
+    </div>
+
+    <div class="figure">
+      <div class="stage-box" id="box">
+        <div class="stage" id="stage" role="img" aria-label="Animated diagram of the current step">
+
+          <!-- SCENE 1: unify -->
+          <div class="scene on" id="sc0">
+            <svg viewBox="0 0 600 600" aria-hidden="true">
+              <g fill="none" stroke="var(--cobalt)" stroke-width="1.25">
+                <path class="w1" pathLength="1" d="M87 56 L210 200"/>
+                <path class="w1" pathLength="1" d="M513 56 L390 200"/>
+                <path class="w1" pathLength="1" d="M87 546 L210 400"/>
+                <path class="w1" pathLength="1" d="M513 546 L390 400"/>
+              </g>
+            </svg>
+
+            <div class="chip" style="left:18px;top:40px"><i></i>Inventory</div>
+            <div class="chip" style="left:444px;top:40px"><i></i>Monitoring</div>
+            <div class="chip" style="left:18px;top:530px"><i></i>Validation</div>
+            <div class="chip" style="left:444px;top:530px"><i></i>Model repo</div>
+
+            <div class="card entity" id="entity" style="left:120px;top:128px;width:360px;box-sizing:border-box;opacity:0">
+              <div class="top"><span>MODEL · MRM-0142</span><span class="pill blue">agent-ready</span></div>
+              <div class="name">Retail Card PD Scorecard</div>
+              <div class="fields">
+                <div class="field"><span class="f">risk_tier</span><span class="v">Tier 1</span><span class="p">Material model, per inventory</span></div>
+                <div class="field"><span class="f">psi_sep</span><span class="v neg">0.27</span><span class="p">Score drift vs. dev sample; policy limit 0.25</span></div>
+                <div class="field"><span class="f">ks_sep</span><span class="v">0.38</span><span class="p">Down from 0.44 at last validation</span></div>
+                <div class="field"><span class="f">open_findings</span><span class="v">2</span><span class="p">From the 2025 validation report</span></div>
+              </div>
+              <div class="foot">4 sources resolved · thresholds from MRM policy · refreshed monthly</div>
+            </div>
+
+            <div class="card src" style="left:18px;top:22px;width:240px">
+              <div class="k"><span>Model inventory</span><span>GRC</span></div>
+              <div class="rows">
+                <div><span class="lab">model_id</span><span class="hl">MRM-0142</span></div>
+                <div><span class="lab">name</span><span class="hl">Retail Card PD</span></div>
+                <div><span class="lab">risk_tier</span><span>1</span></div>
+                <div><span class="lab">owner</span><span>Consumer Risk</span></div>
+              </div>
+            </div>
+
+            <div class="card src" style="left:342px;top:30px;width:240px">
+              <div class="k"><span>Monitoring run</span><span>Sep 2026</span></div>
+              <div class="rows">
+                <div><span class="lab">model</span><span class="hl">card_pd_v3_2</span></div>
+                <div><span class="lab">psi</span><span class="neg">0.27</span></div>
+                <div><span class="lab">ks</span><span>0.38</span></div>
+                <div><span class="lab">gini</span><span>0.51</span></div>
+              </div>
+            </div>
+
+            <div class="card src" style="left:18px;top:338px;width:254px">
+              <div class="k"><span>Validation report</span><span>2025 · PDF</span></div>
+              <div class="quote">“Finding F-3: <span class="hl">Card PD v3.2</span> rank-orders thin-file applicants less reliably. Monitor drift in this segment quarterly.”</div>
+            </div>
+
+            <div class="card src" style="left:342px;top:356px;width:240px">
+              <div class="k"><span>Model repo</span><span>Git</span></div>
+              <div class="rows">
+                <div><span class="lab">repo</span><span>risk/<span class="hl">card-pd</span></span></div>
+                <div><span class="lab">tag</span><span class="hl">v3.2.1</span></div>
+                <div><span class="lab">deployed_to</span><span>scoring-svc</span></div>
+                <div><span class="lab">last_commit</span><span>Jun 14</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCENE 2: connect -->
+          <div class="scene" id="sc1">
+            <svg viewBox="0 0 600 600" aria-hidden="true">
+              <rect id="frame" x="208" y="165" width="184" height="270" rx="14" fill="none" stroke="var(--cobalt)" stroke-width="1.5" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/>
+              <g id="links" stroke="var(--ink)" stroke-width="1.25" fill="none"></g>
+              <g id="ports" fill="var(--cobalt)"></g>
+              <g id="packets" fill="var(--cobalt)"></g>
+            </svg>
+            <div class="envlabel" id="envlabel">env · model-monitoring</div>
+            <div class="hub" id="hub">Agent</div>
+            <div class="tools" id="tools">
+              <div>compute_psi()</div>
+              <div>backtest()</div>
+              <div>check_policy()</div>
+              <div>write_back()</div>
+              <div class="replay">tested on 24 months of past monitoring runs</div>
+            </div>
+            <div id="nodes"></div>
+          </div>
+
+          <!-- SCENE 3: act -->
+          <div class="scene" id="sc2">
+            <svg viewBox="0 0 600 600" aria-hidden="true">
+              <path id="spine" pathLength="1" fill="none" stroke="var(--ink)" stroke-width="1.25" stroke-dasharray="1 1" stroke-dashoffset="1"
+                d="M40 214 V501 M40 274 H62 M40 348 H62 M40 422 H62 M40 501 H62"/>
+            </svg>
+            <div class="card insight" id="insight" style="opacity:0">
+              <div class="k"><span>Insight · MRM-0142</span><span>from 4 sources</span></div>
+              <h4>Card PD drift breached policy in September, driven by thin-file applicants.</h4>
+              <div class="ev"><span>PSI 0.27 &gt; 0.25</span><span>Tier 1 model</span><span>finding F-3</span><span>MRM policy §4.2</span></div>
+              <div class="rec"><span class="mono">Recommend</span><span>Escalate and move up targeted revalidation</span></div>
+            </div>
+            <div class="card act" style="top:244px"><div><div class="tt">Draft the monitoring memo</div><div class="dd">Breach summary and segment charts for the model owner</div></div><span class="pill status" data-done="Sent">Queued</span></div>
+            <div class="card act" style="top:318px"><div><div class="tt">Log a model issue</div><div class="dd">Medium severity, linked to finding F-3, in Jira</div></div><span class="pill status" data-done="Logged">Queued</span></div>
+            <div class="card act" style="top:392px"><div><div class="tt">Update the model inventory</div><div class="dd">Status set to under review, revalidation due Q1</div></div><span class="pill status" data-done="Written">Queued</span></div>
+            <div class="approve" id="approve"><span class="tick">✓</span><div><div class="tt">Delivered to J. Okafor, head of model risk</div><div class="dd">Approved 10:42 AM · each action linked to its evidence</div></div></div>
+          </div>
+
+        </div>
+      </div>
+      <div class="caption" id="caption">Four systems, four names for the same model, one record an agent can reason about.</div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap outro">End of sequence · scroll up to replay</div>
+
+<script>
+(() => {
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const seg = (t, a, b) => ease(clamp((t - a) / (b - a)));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  const captions = [
+    'Four systems, four names for the same model, one record an agent can reason about.',
+    'Six systems wired into one environment built for the task.',
+    'One finding becomes three actions, approved and logged.'
+  ];
+
+  /* ---------- stage scaling ---------- */
+  const box = $('#box'), stage = $('#stage');
+  const fit = () => {
+    const r = box.getBoundingClientRect();
+    stage.style.setProperty('--s', Math.max(.3, Math.min(r.width / 600, r.height / 600)));
+  };
+  new ResizeObserver(fit).observe(box); fit();
+
+  /* ---------- scene 1 refs ---------- */
+  const s1 = {
+    hls: $$('#sc0 .hl'),
+    srcs: $$('#sc0 .src'),
+    chips: $$('#sc0 .chip'),
+    wires: $$('#sc0 .w1'),
+    entity: $('#entity'),
+    fields: $$('#entity .field'),
+    foot: $('#entity .foot'),
+    pill: $('#entity .pill')
+  };
+  s1.wires.forEach(w => { w.style.strokeDasharray = '1 1'; w.style.strokeDashoffset = 1; });
+  // delta from each source card's centre to its chip's centre
+  const deltas = s1.srcs.map((c, i) => {
+    const ch = s1.chips[i];
+    const cx = c.offsetLeft + c.offsetWidth / 2, cy = c.offsetTop + c.offsetHeight / 2;
+    const tx = ch.offsetLeft + ch.offsetWidth / 2, ty = ch.offsetTop + ch.offsetHeight / 2;
+    return [tx - cx, ty - cy];
+  });
+
+  function scene1(t) {
+    s1.hls.forEach((h, i) => {
+      const v = seg(t, .05 + i * .018, .15 + i * .018);
+      h.style.setProperty('--h', v.toFixed(3));
+      h.classList.toggle('lit', v > .9);
+    });
+    const m = seg(t, .36, .62), fade = seg(t, .46, .64);
+    s1.srcs.forEach((c, i) => {
+      c.style.transform = `translate(${deltas[i][0] * m}px, ${deltas[i][1] * m}px) scale(${1 - .62 * m})`;
+      c.style.opacity = 1 - fade;
+      c.style.visibility = fade >= 1 ? 'hidden' : 'visible';
+    });
+    const chipO = seg(t, .54, .68);
+    s1.chips.forEach(c => c.style.opacity = chipO);
+    const w = seg(t, .6, .78);
+    s1.wires.forEach(p => p.style.strokeDashoffset = 1 - w);
+    const e = seg(t, .55, .76);
+    s1.entity.style.opacity = e;
+    s1.entity.style.transform = `translateY(${(1 - e) * 16}px) scale(${.96 + .04 * e})`;
+    s1.fields.forEach((f, i) => {
+      const v = seg(t, .66 + i * .055, .78 + i * .055);
+      f.style.opacity = v; f.style.transform = `translateX(${(1 - v) * -8}px)`;
+    });
+    s1.foot.style.opacity = seg(t, .88, .98);
+    s1.pill.style.opacity = seg(t, .9, 1);
+  }
+
+  /* ---------- scene 2 build ---------- */
+  const NODES = [
+    { a: 0,   n: 'Inventory',       t: 'GRC platform' },
+    { a: 60,  n: 'Warehouse',       t: 'Snowflake' },
+    { a: 120, n: 'Vendor models',   t: 'without APIs', t2: 'custom connector' },
+    { a: 180, n: 'Model repo',      t: 'GitHub' },
+    { a: 240, n: 'Policy library',  t: 'SharePoint' },
+    { a: 300, n: 'Issue tracker',   t: 'Jira' }
+  ];
+  const C = { x: 300, y: 300 }, FR = { hw: 92, hh: 135 };
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const nodesEl = $('#nodes'), linksEl = $('#links'), portsEl = $('#ports'), pktEl = $('#packets');
+  const s2 = NODES.map(d => {
+    const el = document.createElement('div');
+    el.className = 'node';
+    el.innerHTML = `<div class="n">${d.n}</div><div class="t">${d.t}</div>`;
+    nodesEl.appendChild(el);
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('pathLength', '1');
+    line.style.strokeDasharray = '1 1'; line.style.strokeDashoffset = 1;
+    linksEl.appendChild(line);
+    const port = document.createElementNS(svgNS, 'circle');
+    port.setAttribute('r', '3.5'); port.style.opacity = 0;
+    portsEl.appendChild(port);
+    const pk = document.createElementNS(svgNS, 'circle');
+    pk.setAttribute('r', '3'); pk.style.opacity = 0;
+    pktEl.appendChild(pk);
+    const rad = d.a * Math.PI / 180, dx = Math.cos(rad), dy = Math.sin(rad);
+    const s = Math.min(FR.hw / Math.abs(dx || 1e-6), FR.hh / Math.abs(dy || 1e-6));
+    return { d, el, line, port, pk, dx, dy, px: C.x + dx * s, py: C.y + dy * s, on: false, draw: 0, x: 0, y: 0 };
+  });
+  const frame = $('#frame'), envlabel = $('#envlabel'), hub = $('#hub'), tools = $$('#tools div');
+
+  function scene2(t) {
+    frame.style.strokeDashoffset = 1 - seg(t, .16, .36);
+    envlabel.style.opacity = seg(t, .3, .4);
+    const h = seg(t, .26, .4);
+    hub.style.opacity = h; hub.style.transform = `scale(${.7 + .3 * h})`;
+    s2.forEach((n, i) => {
+      n.el.style.opacity = seg(t, i * .025, .14 + i * .025);
+      const r = 246 - 16 * seg(t, .3 + i * .035, .48 + i * .035);
+      n.x = C.x + n.dx * r; n.y = C.y + n.dy * r;
+      n.el.style.left = n.x + 'px'; n.el.style.top = n.y + 'px';
+      n.line.setAttribute('x1', n.x); n.line.setAttribute('y1', n.y);
+      n.line.setAttribute('x2', n.px); n.line.setAttribute('y2', n.py);
+      n.port.setAttribute('cx', n.px); n.port.setAttribute('cy', n.py);
+      n.draw = seg(t, .34 + i * .04, .48 + i * .04);
+      n.line.style.strokeDashoffset = 1 - n.draw;
+      n.port.style.opacity = n.draw >= 1 ? 1 : 0;
+      const on = n.draw >= 1;
+      if (on !== n.on) {
+        n.on = on;
+        n.el.classList.toggle('on', on);
+        if (n.d.t2) n.el.querySelector('.t').textContent = on ? n.d.t2 : n.d.t;
+      }
+    });
+    tools.forEach((d, i) => {
+      const v = seg(t, .64 + i * .05, .76 + i * .05);
+      d.style.opacity = v; d.style.transform = `translateY(${(1 - v) * 6}px)`;
+    });
+  }
+  // ambient packets once a link is live (time-based)
+  let sceneIdx = 0;
+  function packets(now) {
+    if (sceneIdx === 1 && !reduce) {
+      s2.forEach((n, i) => {
+        if (n.draw < 1) { n.pk.style.opacity = 0; return; }
+        let f = ((now / 1700) + i * .37) % 1;
+        if (i % 2) f = 1 - f;                       // alternate direction: reads vs. write-backs
+        const x = n.x + (n.px - n.x) * f, y = n.y + (n.py - n.y) * f;
+        n.pk.setAttribute('cx', x); n.pk.setAttribute('cy', y);
+        n.pk.style.opacity = Math.sin(Math.PI * f).toFixed(3);
+      });
+    }
+    requestAnimationFrame(packets);
+  }
+  requestAnimationFrame(packets);
+
+  /* ---------- scene 3 refs ---------- */
+  const s3 = {
+    insight: $('#insight'), ev: $$('#insight .ev span'), rec: $('#insight .rec'),
+    spine: $('#spine'), acts: $$('#sc2 .act'), approve: $('#approve')
+  };
+  s3.acts.forEach(a => a._s = 'q');
+  function scene3(t) {
+    const o = seg(t, 0, .16);
+    s3.insight.style.opacity = o;
+    s3.insight.style.transform = `translateY(${(1 - o) * -12}px)`;
+    s3.ev.forEach((e, i) => e.style.opacity = seg(t, .1 + i * .04, .2 + i * .04));
+    s3.rec.style.opacity = seg(t, .24, .34);
+    s3.spine.style.strokeDashoffset = 1 - seg(t, .3, .62);
+    s3.acts.forEach((a, i) => {
+      const v = seg(t, .34 + i * .05, .46 + i * .05);
+      a.style.opacity = v; a.style.transform = `translateX(${(1 - v) * 14}px)`;
+      const st = t > .74 + i * .07 ? 'd' : t > .5 + i * .05 ? 'r' : 'q';
+      if (st !== a._s) {
+        a._s = st;
+        const p = a.querySelector('.status');
+        p.classList.toggle('ready', st === 'r');
+        p.classList.toggle('done', st === 'd');
+        p.textContent = st === 'd' ? '✓ ' + p.dataset.done : st === 'r' ? 'Ready' : 'Queued';
+      }
+    });
+    const ap = seg(t, .6, .7);
+    s3.approve.style.opacity = ap;
+    s3.approve.style.transform = `scale(${.97 + .03 * ap})`;
+  }
+
+  /* ---------- scroll driver ---------- */
+  const sc = $('#scrolly'), steps = $$('.step'), scenes = $$('.scene'), btns = $$('.rail button'), fills = $$('.rail .fill'), cap = $('#caption');
+  const render = [scene1, scene2, scene3];
+  function progress() {
+    const r = sc.getBoundingClientRect();
+    const total = r.height - innerHeight;
+    return total > 0 ? clamp(-r.top / total) * 3 : 0;
+  }
+  let ticking = false;
+  function update() {
+    ticking = false;
+    const p = progress();
+    const idx = Math.min(2, Math.floor(p));
+    if (idx !== sceneIdx || !update.ran) {
+      sceneIdx = idx;
+      steps.forEach((s, i) => s.classList.toggle('on', i === idx));
+      scenes.forEach((s, i) => s.classList.toggle('on', i === idx));
+      btns.forEach((b, i) => { b.classList.toggle('on', i === idx); b.setAttribute('aria-current', i === idx ? 'step' : 'false'); });
+      cap.textContent = captions[idx];
+      update.ran = true;
+    }
+    fills.forEach((f, i) => f.style.transform = `scaleX(${clamp((p - i) / .82)})`);
+    // each step scrubs over the first 82% of its scroll span, then holds
+    render.forEach((fn, i) => fn(reduce ? (i <= idx ? 1 : 0) : clamp((p - i) / .82)));
+  }
+  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', req, { passive: true });
+  addEventListener('resize', req);
+  btns.forEach((b, i) => b.addEventListener('click', () => {
+    const total = sc.offsetHeight - innerHeight;
+    const top = sc.getBoundingClientRect().top + scrollY + total * (i / 3) + (i ? 4 : 0);
+    scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+  }));
+  update();
+})();
+</script>
