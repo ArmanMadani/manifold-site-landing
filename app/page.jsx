@@ -2,6 +2,7 @@ import Image from "next/image";
 import splash from "../dune-splash-image.jpg";
 import PanelScroller from "./components/PanelScroller";
 import ShinyButton from "./components/ShinyButton";
+import SiteCredit from "./components/SiteCredit";
 
 // Each entry is one scroll stop. Order here is scroll order; the chevron
 // flips and the footer appears on whichever panel is last.
@@ -77,16 +78,7 @@ export default function Home() {
 
       <PanelScroller
         panels={PANELS}
-        footer={
-          <>
-            Made with{" "}
-            {/* U+FE0E forces the monochrome text glyph, never the emoji */}
-            <span role="img" aria-label="love">
-              {"♥︎"}
-            </span>{" "}
-            in San Francisco
-          </>
-        }
+        footer={<SiteCredit />}
       />
     </main>
   );

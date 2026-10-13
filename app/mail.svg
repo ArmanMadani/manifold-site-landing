@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <mask id="cut">
+      <rect width="512" height="512" fill="#fff"/>
+      <rect x="100" y="140" width="312" height="232" rx="30" fill="#000"/>
+      <polyline points="100,172 256,284 412,172" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <rect width="512" height="512" rx="40" fill="#fff" mask="url(#cut)"/>
+</svg>

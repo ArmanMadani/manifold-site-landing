@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import splash from "../dune-splash-image.jpg";
+import SiteCredit from "./components/SiteCredit";
 
 // Placeholder for routes that don't exist yet (Services, Products, …)
 export default function NotFound() {
@@ -25,6 +26,9 @@ export default function NotFound() {
           </Link>
         </p>
       </div>
+      <footer className="page-credit reveal" style={{ "--i": 0 }}>
+        <SiteCredit />
+      </footer>
     </main>
   );
 }

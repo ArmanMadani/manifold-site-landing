@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import splash from "../../dune-splash-image.jpg";
 import FadeOnLeave from "../components/FadeOnLeave";
+import SiteCredit from "../components/SiteCredit";
 import SubscribeForm from "../components/SubscribeForm";
 import { POSTS, TAG_COLORS, formatDate } from "./posts";
 
@@ -62,12 +63,7 @@ export default function Blog() {
           </section>
 
           <footer className="blog-footer">
-            Made with{" "}
-            {/* U+FE0E forces the monochrome text glyph, never the emoji */}
-            <span role="img" aria-label="love">
-              {"♥︎"}
-            </span>{" "}
-            in San Francisco
+            <SiteCredit />
           </footer>
         </div>
       </FadeOnLeave>

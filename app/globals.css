@@ -118,6 +118,19 @@ button {
   pointer-events: auto;
 }
 
+/* Scrolled-under state (SiteHeader, [data-header-clear] pages). filter
+   rather than opacity: the .reveal entrance pins each item's opacity, and
+   opacity on the header itself would switch off the menu overlay's blur */
+.site-header > :is(.wordmark, .site-nav, .menu-toggle) {
+  transition: filter 300ms ease, visibility 0s, color 300ms ease;
+}
+
+.site-header[data-hidden] > :is(.wordmark, .site-nav, .menu-toggle) {
+  filter: opacity(0);
+  visibility: hidden;
+  transition: filter 300ms ease, visibility 0s linear 300ms, color 300ms ease;
+}
+
 /* The icon is sized to the cap height and sits on the text baseline, so its
    top and bottom edges line up exactly with the top and bottom of the "M". */
 .wordmark {
@@ -633,13 +646,13 @@ button {
   text-shadow: 0 1px 24px rgba(0, 0, 0, 0.25);
 }
 
-/* Leaving (FadeOnLeave, on Blog and Contact): the page's layers fade back
+/* Leaving (FadeOnLeave, on Blog, About and Contact): the page's layers fade back
    to the bare backdrop before the next page appears. Animations rather
    than transitions, since the fade-in animations pin their opacity.
    Frosted fields fade themselves: fading an ancestor would switch off
    their backdrop blur for the whole fade. */
 [data-leaving] .contact-scrim,
-[data-leaving] :is(.post-list, .blog-footer, .contact .panel__title),
+[data-leaving] :is(.post-list, .blog-footer, .contact .panel__title, .about, .page-credit),
 [data-leaving] :is(.subscribe, .contact) :is(
     input,
     textarea,
@@ -837,6 +850,879 @@ button {
     text-align: center;
     font-size: 12px;
   }
+
+
+  /* Footer sits as low as the fixed ones on Home and Contact */
+  .blog {
+    padding-bottom: 12px;
+  }
+}
+
+/* ============================================================
+   About — same frost as Blog; intro copy, then the founder block
+   (round portrait | name, role, credentials, links)
+   ============================================================ */
+.about {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: calc(clamp(20px, 3.1vw, 48px) + var(--wordmark-size) + clamp(48px, 7vw, 110px))
+    var(--gutter) clamp(16px, 2.6vh, 26px);
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.25);
+}
+
+.about .pan-in {
+  animation-delay: calc(600ms + var(--i, 0) * 80ms);
+  /* Let go once finished: an opacity animation that stays in effect makes
+     the section a backdrop root, which switches off the process cards' blur */
+  animation-fill-mode: backwards;
+}
+
+/* Left-aligned copy in a centered column, as wide as the home panel copy
+   (.panel__body's 40em, measured at the body size) */
+.about__column {
+  align-self: center;
+  width: 100%;
+  max-width: 40em;
+  font-size: clamp(17px, 1.4vw, 22px);
+}
+
+.about__section + .about__section {
+  margin-top: 2.4em;
+}
+
+.about__heading {
+  margin: 0 0 0.6em;
+  font-size: clamp(22px, 1.9vw, 30px);
+  /* PP Editorial New Ultrabold, the family's only bold cut */
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+/* Stays at the bottom when the copy is shorter than the screen */
+.about .blog-footer {
+  margin-top: auto;
+  padding-top: clamp(32px, 5vh, 56px);
+}
+
+.founder {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2vw, 32px);
+  margin-top: clamp(32px, 4vw, 64px);
+}
+
+.founder__photo {
+  flex: none;
+  width: clamp(166px, 12vw, 184px);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: 47% 50%;
+  border-radius: 50%;
+}
+
+.founder__name {
+  margin: 0 0 0.45em;
+  font-size: clamp(17px, 1.3vw, 20px);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.founder__pipe {
+  margin: 0 0.2em;
+}
+
+.founder__credentials {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: clamp(13px, 0.94vw, 14.5px);
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.founder__credentials li + li {
+  margin-top: 0.3em;
+}
+
+.founder__credentials a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 200ms ease;
+}
+
+.founder__credentials a:hover,
+.founder__credentials a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+.founder__links {
+  display: flex;
+  gap: 12px;
+  margin-top: 0.8em;
+}
+
+.founder__links a {
+  display: block;
+  opacity: 0.85;
+  transition: opacity 200ms ease;
+}
+
+.founder__links a:hover,
+.founder__links a:focus-visible {
+  opacity: 1;
+}
+
+.founder__links img {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .founder {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .founder__photo {
+    width: 96px;
+  }
+
+  /* Same footer height as Blog */
+  .about {
+    padding-bottom: 12px;
+  }
+}
+
+/* ============================================================
+   Process sequence (ProcessSequence.jsx) — sticky scrollytelling
+   under Approach. Copy rail left, a 600×600 stage right that scales
+   to fit; one scene per step, scrubbed by scroll. Frosted cards,
+   white serif, mono labels. Everything is scoped to .process.
+   ============================================================ */
+.process {
+  /* A little wider than the text column, never past the gutters */
+  --ps-w: min(100% + 12vw, 1040px, 100vw - var(--gutter) * 2);
+  --ps-paper: rgba(22, 22, 22, 0.58);
+  --ink: #f3f2ef;
+  --on-ink: #121212;
+  --muted: rgba(243, 242, 239, 0.62);
+  --rule: rgba(243, 242, 239, 0.22);
+  /* Brand-mark colors: orange accent, blue for done, red (lifted a touch
+     to read on the dark cards) for out-of-policy values */
+  --accent: #eb9e2b;
+  --accent-tint: rgba(235, 158, 43, 0.22);
+  --ok: #4a9dbf;
+  --ok-tint: rgba(59, 134, 164, 0.28);
+  --neg: #f0574d;
+  --shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.65);
+  --f-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+
+  position: relative;
+  /* Centered on the text column (and so on the screen) */
+  width: var(--ps-w);
+  margin: 2em calc(50% - var(--ps-w) / 2);
+  height: 420vh;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  text-shadow: none;
+}
+
+.process .mono {
+  font-family: var(--f-mono);
+}
+
+.process .sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(24px, 3vw, 44px);
+  align-items: center;
+}
+
+.process .copy {
+  display: grid;
+  gap: 36px;
+  min-width: 0;
+}
+
+.process .steps {
+  display: grid;
+}
+
+.process .step {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  visibility: hidden;
+}
+
+.process .step.on {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
+.process .count {
+  font-family: var(--f-mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.process .count b {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.process .step h3 {
+  font-size: clamp(26px, 2.5vw, 36px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  /* PP Editorial New Ultrabold, like the section headings */
+  font-weight: 800;
+  margin: 12px 0 14px;
+  text-wrap: balance;
+}
+
+.process .step p {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.process .step p + p {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.process .rail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 380px;
+}
+
+.process .rail button {
+  all: unset;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding-block: 6px;
+  border-radius: 4px;
+}
+
+.process .rail button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.process .rail button.on {
+  color: var(--ink);
+}
+
+.process .track {
+  height: 2px;
+  background: var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+
+.process .fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.process .figure {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* The diagram sits in a thin-ruled panel, square cornered (after
+   overstandlabs.com); the caption stays outside, underneath */
+.process .ps-box {
+  position: relative;
+  width: 100%;
+  height: min(72vh, 560px);
+  height: min(72svh, 560px);
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.process .ps-stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 600px;
+  height: 600px;
+  transform: translate(-50%, -50%) scale(var(--s, 1));
+  transform-origin: center;
+}
+
+.process .caption {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  min-height: 1.5em;
+  transition: opacity 0.3s;
+}
+
+.process .scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s ease, visibility 0.45s;
+}
+
+.process .scene.on {
+  opacity: 1;
+  visibility: visible;
+}
+
+.process .scene svg {
+  position: absolute;
+  inset: 0;
+  width: 600px;
+  height: 600px;
+  overflow: visible;
+}
+
+/* Lines draw in by animating the dash offset from 1 to 0 */
+.process :is(.w1, .ps-frame, .ps-spine, .ps-links line) {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+
+.process :is(.ps-ports, .ps-packets) circle {
+  opacity: 0;
+}
+
+/* cards */
+.process :is(.card, .chip, .node.on, .approve) {
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.process .card {
+  position: absolute;
+  box-sizing: border-box;
+  background: var(--ps-paper);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow);
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+
+.process .k {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.process .rows {
+  display: grid;
+  gap: 3px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+}
+
+.process .rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.process .rows .lab {
+  color: var(--muted);
+}
+
+.process .neg {
+  color: var(--neg);
+}
+
+.process .quote {
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+
+.process .hl {
+  background-image: linear-gradient(var(--accent-tint), var(--accent-tint));
+  background-repeat: no-repeat;
+  background-size: calc(var(--h, 0) * 100%) 100%;
+  border-radius: 3px;
+  padding: 0 2px;
+  margin: 0 -1px;
+  color: var(--ink);
+  transition: color 0.2s;
+}
+
+.process .hl.lit {
+  color: var(--accent);
+}
+
+.process .src {
+  will-change: transform, opacity;
+}
+
+.process .chip {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  background: var(--ps-paper);
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  color: var(--ink);
+  opacity: 0;
+  width: 138px;
+  box-sizing: border-box;
+}
+
+.process .chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+.process .entity {
+  padding: 18px 18px 14px;
+  border-color: var(--ink);
+}
+
+.process .entity .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+.process .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 11px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.process .pill.blue {
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+
+.process .entity .name {
+  font-size: 27px;
+  letter-spacing: -0.015em;
+  margin: 6px 0 10px;
+}
+
+.process .fields {
+  display: grid;
+}
+
+.process .field {
+  display: grid;
+  grid-template-columns: 118px 62px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.process .field .f {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.process .field .v {
+  font-family: var(--f-mono);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.process .field .p {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.process .foot {
+  margin-top: 4px;
+  padding-top: 9px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+}
+
+/* scene 2 */
+.process .node {
+  position: absolute;
+  width: 122px;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  padding: 8px 10px;
+  border: 1px dashed var(--rule);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
+  opacity: 0;
+}
+
+.process .node .n {
+  font-size: 15px;
+  line-height: 1.15;
+}
+
+.process .node .t {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+.process .node.on {
+  border-style: solid;
+  border-color: var(--ink);
+  background: var(--ps-paper);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.process .node.on .t {
+  color: var(--accent);
+}
+
+/* "without APIs" turns into "custom connector" once the link is live */
+.process .node .t-on,
+.process .node.on .t-off {
+  display: none;
+}
+
+.process .node.on .t-on {
+  display: inline;
+}
+
+.process .envlabel {
+  position: absolute;
+  left: 218px;
+  top: 174px;
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  opacity: 0;
+}
+
+.process .hub {
+  position: absolute;
+  left: 268px;
+  top: 198px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--on-ink);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  opacity: 0;
+}
+
+.process .tools {
+  position: absolute;
+  left: 220px;
+  top: 282px;
+  width: 160px;
+  display: grid;
+  gap: 4px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+}
+
+.process .tools div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 20px;
+  opacity: 0;
+}
+
+.process .tools div::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  flex: none;
+}
+
+.process .tools .replay {
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--muted);
+  height: auto;
+  line-height: 1.3;
+}
+
+.process .tools .replay::before {
+  display: none;
+}
+
+/* scene 3 */
+.process .ps-insight {
+  left: 30px;
+  top: 22px;
+  width: 540px;
+  padding: 16px 18px;
+  border-color: var(--ink);
+}
+
+.process .ps-insight h4 {
+  margin: 2px 0 12px;
+  font-size: 21px;
+  line-height: 1.25;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+.process .ev {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.process .ev span {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  color: var(--muted);
+  opacity: 0;
+}
+
+.process .rec {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 16px;
+  opacity: 0;
+}
+
+.process .rec .mono {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.process .act {
+  left: 62px;
+  width: 508px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px 0 16px;
+  opacity: 0;
+}
+
+.process .act .tt,
+.process .approve .tt {
+  font-size: 16.5px;
+  line-height: 1.25;
+}
+
+.process .act .dd {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.process .status {
+  min-width: 104px;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* The script only toggles .ready/.done; the label follows */
+.process .status::after {
+  content: "Queued";
+}
+
+.process .status.ready {
+  background: var(--accent-tint);
+  color: var(--accent);
+  border-color: transparent;
+}
+
+.process .status.ready::after {
+  content: "Ready";
+}
+
+.process .status.done {
+  background: var(--ok-tint);
+  color: var(--ok);
+  border-color: transparent;
+}
+
+.process .status.done::after {
+  content: "✓ " attr(data-done);
+}
+
+.process .approve {
+  position: absolute;
+  left: 62px;
+  top: 472px;
+  width: 508px;
+  height: 58px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 1.5px solid var(--ok);
+  border-radius: 10px;
+  color: var(--ok);
+  background: var(--ps-paper);
+  opacity: 0;
+}
+
+.process .approve .tick {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--ok);
+  color: var(--on-ink);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  flex: none;
+}
+
+.process .approve .tt {
+  color: var(--ink);
+}
+
+.process .approve .dd {
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+/* narrow: stack copy over figure inside the sticky frame */
+@media (max-width: 860px) {
+  .process .sticky {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 12px;
+    padding-block: 20px 12px;
+    box-sizing: border-box;
+  }
+
+  .process .copy {
+    gap: 14px;
+  }
+
+  .process .step h3 {
+    font-size: 24px;
+    margin: 8px 0;
+  }
+
+  .process .step p {
+    font-size: 15px;
+  }
+
+  .process .step p + p {
+    display: none;
+  }
+
+  .process .figure {
+    height: 100%;
+    min-height: 0;
+    justify-content: center;
+  }
+
+  /* Square like the diagram, so the panel hugs it instead of filling
+     the leftover height */
+  .process .ps-box {
+    flex: none;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .process .rail {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process :is(.step, .scene, .node, .status, .hl) {
+    transition: none;
+  }
 }
 
 /* ============================================================
@@ -883,12 +1769,40 @@ button {
 /* ============================================================
    End-of-page footer
    ============================================================ */
+/* Shared copy (SiteCredit): the love line over the copyright */
+.credit__line {
+  display: block;
+}
+
+.credit__copyright {
+  margin-top: 0.3em;
+  opacity: 0.8;
+}
+
+/* Contact and Coming soon: pinned to the bottom-right of the page,
+   matching the Blog/About footer */
+.page {
+  position: relative;
+}
+
+.page-credit {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(16px, 2.6vh, 26px);
+  z-index: 10;
+  font-size: 13px;
+  text-align: right;
+  color: rgba(230, 230, 230, 0.8);
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.25);
+}
+
 .panel-footer {
   position: fixed;
-  right: clamp(16px, 2vw, 32px);
+  right: var(--gutter);
   bottom: clamp(16px, 2.6vh, 26px);
   z-index: 15;
   font-size: 13px;
+  text-align: right;
   color: rgba(230, 230, 230, 0.8);
 
   opacity: 0;
@@ -1135,7 +2049,15 @@ button {
 
   /* Stack the footer under the chevron so they never collide */
   .panel-chevron {
-    bottom: 30px;
+    bottom: 48px;
+  }
+
+  .page-credit {
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    text-align: center;
+    font-size: 12px;
   }
 
   .panel-footer {
@@ -1209,8 +2131,8 @@ button {
 
   .panel-footer {
     left: auto;
-    right: 16px;
-    bottom: 14px;
+    right: var(--gutter);
+    bottom: clamp(16px, 2.6vh, 26px);
     text-align: right;
   }
 }

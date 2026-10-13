@@ -37,6 +37,35 @@ export default function SiteHeader() {
     setMenuOpen(false);
   }, [pathname]);
 
+  // On pages that opt in with [data-header-clear], the header steps aside
+  // once the page's copy scrolls up to it, rather than sitting on the text
+  const headerRef = useRef(null);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    let frame;
+    const check = () => {
+      frame = undefined;
+      const first = document.querySelector("[data-header-clear] > :not(.sr-only)");
+      const header = headerRef.current;
+      if (!first || !header) return setHidden(false);
+      // A little clearance, so it's gone before the text reaches it
+      setHidden(first.getBoundingClientRect().top < header.getBoundingClientRect().bottom + 16);
+    };
+    const onScroll = () => {
+      frame ??= requestAnimationFrame(check);
+    };
+
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
+
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -65,7 +94,12 @@ export default function SiteHeader() {
   }, [menuOpen]);
 
   return (
-    <header className="site-header" data-menu-open={menuOpen}>
+    <header
+      ref={headerRef}
+      className="site-header"
+      data-menu-open={menuOpen}
+      data-hidden={(hidden && !menuOpen) || undefined}
+    >
       <Link
         href="/"
         className="wordmark reveal"
