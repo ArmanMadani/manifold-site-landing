@@ -17,7 +17,7 @@
   --cap-height: 0.8;
   --serif-overshoot: 0.02;
 
-  --wordmark-size: clamp(32.4px, 3.42vw, 54px);
+  --wordmark-size: clamp(25.9px, 2.74vw, 43.2px);
   --nav-size: clamp(14px, 1.05vw, 16px);
 
   /* Shared horizontal gutter: wordmark, nav and panel copy all align to it */
@@ -139,7 +139,7 @@ button {
   gap: 0.36em;
   font-size: var(--wordmark-size);
   line-height: 1;
-  color: var(--ink);
+  color: var(--paper);
   text-decoration: none;
 }
 
@@ -2099,7 +2099,7 @@ button {
   }
 
   :root {
-    --wordmark-size: 25.2px;
+    --wordmark-size: 20.2px;
   }
 
   .panel__title {
