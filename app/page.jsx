@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import splash from "../dune-splash-image.jpg";
 import PanelScroller from "./components/PanelScroller";
 import ShinyButton from "./components/ShinyButton";
@@ -49,11 +50,10 @@ const PANELS = [
           We judge ourselves on value-added outcomes for our clients, not hours
           billed.
         </p>
-        {/* Placeholder: will link to the blog post once it exists. */}
         <p className="panel__body">
-          <span className="panel__link">
+          <Link href="/about" className="panel__link">
             Read more about our hybrid services-to-software approach.
-          </span>
+          </Link>
         </p>
       </>
     ),
