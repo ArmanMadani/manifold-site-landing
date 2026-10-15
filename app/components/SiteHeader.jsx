@@ -5,9 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import BrandMark from "./BrandMark";
 
+// Services and Products are hidden until those pages exist:
+// { label: "Services", href: "/services" },
+// { label: "Products", href: "/products" },
 const NAV = [
-  { label: "Services", href: "/services" },
-  { label: "Products", href: "/products" },
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact", accent: true },
